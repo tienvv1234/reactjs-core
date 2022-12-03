@@ -1,8 +1,23 @@
 import { useState } from "react";
 
+const orders = [10, 20, 30]
+
 function App() {
   console.log("App component is rendered");
-  const [counter, setCounter] = useState(1);
+  // const total = orders.reduce((acc, order) => acc + order, 0); // this will be called every time App is rendered
+  // we should not dot it here because it will be called every time App is rendered
+  // we should move it to the place init state
+  // console.log("total", total);
+
+  const [counter, setCounter] = useState(() => {
+    // this function will be called only once
+    console.log("init state");
+    // we can do some heavy calculations here
+    const total = orders.reduce((acc, order) => acc + order, 0);
+    console.log("total", total);
+
+    return total; // this value will be used as initial state
+  });
   console.log("counter", counter);
   const increment = () => {
     console.log("increment", counter);
