@@ -7,6 +7,7 @@ function App() {
   return (
     <div style={{ padding: 32}}>
       <input 
+        value={name} // this is two way binding
         onChange={event => setName(event.target.value)}
       />
       <button onClick={() =>
