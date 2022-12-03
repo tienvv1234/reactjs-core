@@ -1,30 +1,21 @@
 import { useState } from "react";
 
-
 function App() {
-  const [info, setInfo] = useState({
-    name: "John",
-    age: 25,
-  });
-
-  const handleUpdate = () => {
-    // setInfo({
-    //   address: "123 Main St",  
-    // });
-    // this will overwrite the previous state
-    // {"address":"123 Main St"} we will lose the name and age
-
-    // to fix this we can use the spread operator
-    setInfo({
-      ...info,
-      address: "123 Main St",
-    });
-  }
-
+  const [name, setName] = useState('');
+  console.log(name);
+  // this is one way binding
   return (
-    <div>
-      <h1>{JSON.stringify(info)}</h1>
-      <button onClick={handleUpdate} > update </button>
+    <div style={{ padding: 32}}>
+      <input 
+        onChange={event => setName(event.target.value)}
+      />
+      <button onClick={() =>
+        setName('abc def') // this will set the value of name to 'abc def'
+        // but it will not update the input field
+        // because the input field is not bound to the state
+        // one way binding
+      }
+      >Clear</button>
     </div>
   )
 }
