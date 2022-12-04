@@ -1,25 +1,36 @@
 import { useState } from "react";
 
+const courses = [
+  {
+    id: 1,
+    name: 'Learn React',
+  },
+  {
+    id: 2,
+    name: 'Learn Vue',
+  },
+]
+
 function App() {
-  const [name, setName] = useState('');
-  console.log(name);
-  // this is one way binding
+
+  const [checked, setChecked] = useState();
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(checked);
+  }
   return (
     <div style={{ padding: 32}}>
-      <input 
-        value={name} // this is two way binding
-        onChange={event => setName(event.target.value)}
-      />
-      <button onClick={() =>
-        setName('abc def') // this will set the value of name to 'abc def'
-        // but it will not update the input field
-        // because the input field is not bound to the state
-        // one way binding
-      }
-      >Clear</button>
+      {courses.map((course) => (
+        // key is required for React to know which element to update
+        // must send key in the root element
+        <div key={course.id}>
+          <input type='radio' checked={checked === course.id} onChange={() => setChecked(course.id)}/>
+          {course.name}
+        </div>
+      ))}
+      <button onClick={handleSubmit}>Clear</button>
     </div>
   )
 }
 
 export default App;
-
