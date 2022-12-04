@@ -25,19 +25,26 @@ import { useState, useEffect } from "react";
 
 function Content () {
     const [title, setTitle] = useState('');
-
+    const [posts , setPosts] = useState([]);
     useEffect(() => {
-        // do something make side effect
-        // should do it in useEffect
-        console.log("mounted");
-        document.title = title;
-    }); 
+        fetch('https://jsonplaceholder.typicode.com/posts')
+            .then(res => res.json())
+            .then(posts => {
+                setPosts(posts);
+            });
+    }, []); 
+    
 
     return (
         <div>
             <input type="text" 
             value={title}
             onChange={(e) => setTitle(e.target.value)} />
+            <ul>
+                {posts.map(post => (
+                    <li>{post}</li>
+                ))}
+            </ul>
             {console.log("render")}
         </div>
     )
