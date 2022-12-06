@@ -23,35 +23,24 @@ import { useState, useEffect } from 'react';
 //      1,2,3
 // 1. callback always run after render (component mounted)
 // 2. Cleanup function always called bufore component unmounted
-
+// 3. Cleanup function always called before callback run
 
 function Content() {
-    const [count, setCount] = useState(180);
+    const [count, setCount] = useState(1);
 
     useEffect(() => {
-        console.log('count1', count)
-        const timeId = setInterval(() => {
-            console.log('count', count)
-            // setCount(count - 1);
-            // this will not affect the count
-            // because the count is not changed
-            // variable count is closure
-            setCount(count => count - 1)
-        }, 1000);
-
+        console.log(`Mounted or re-render ${count} times`);
         return () => {
-            clearInterval(timeId);
+            console.log(`cleanup ${count} times`);
         }
-    }, []);
+    }, [count]);
 
-    // useEffect(() => {
-    //     setTimeout(() => {
-    //         setCount(count - 1);
-    //     }, 1000);
-    // }, [count]);
     return (
         <div>
             <h1>{count}</h1>
+            <button onClick={() => setCount(count + 1)}>
+                click me
+            </button>
         </div>
     );
 }
