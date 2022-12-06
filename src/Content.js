@@ -22,6 +22,7 @@ import { useState, useEffect } from 'react';
 // -------------------
 //      1,2,3
 // 1. callback always run after render (component mounted)
+// 2. Cleanup function always called bufore component unmounted
 
 const tabs = ['posts', 'comments', 'albums'];
 
@@ -29,6 +30,7 @@ function Content() {
     const [title, setTitle] = useState('');
     const [posts, setPosts] = useState([]);
     const [type, setType] = useState('posts');
+    const [showGotop, setShowGotop] = useState(false);
 
     useEffect(() => {
         fetch(`https://jsonplaceholder.typicode.com/${type} `)
@@ -37,6 +39,27 @@ function Content() {
                 setPosts(posts);
             });
     }, [type]);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            console.log('scroll', window.scrollY);
+            if (window.scrollY > 200) {
+                setShowGotop(true);
+            } else {
+                setShowGotop(false);
+            }
+
+            // setShowGotop(window.scrollY > 200);
+        }
+
+        window.addEventListener('scroll', handleScroll);
+
+        // cleanup
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        }
+
+    }, [showGotop]);
 
     return (
         <div>
@@ -58,6 +81,18 @@ function Content() {
                     <li key={post.id}>{post.title || post.name}</li>
                 ))}
             </ul>
+
+            {showGotop && (
+                <button
+                    style={{
+                        position: 'fixed',
+                        bottom: 20,
+                        right: 20,
+                    }}
+                >
+                    Go to top
+                </button>
+            )}
         </div>
     );
 }
