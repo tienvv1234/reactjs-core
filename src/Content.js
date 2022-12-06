@@ -26,21 +26,33 @@ import { useState, useEffect } from 'react';
 // 3. Cleanup function always called before callback run
 
 function Content() {
-    const [count, setCount] = useState(1);
+    const [avatar, setAvatar] = useState(null);
+    const handlePreviewAvatar = (e) => {
+        const file = e.target.files[0];
+        console.log(file)
+        // create preview
+        file.preview = URL.createObjectURL(file);
+        // file avatar preview in memory
+        setAvatar(file);
+    }
 
     useEffect(() => {
-        console.log(`Mounted or re-render ${count} times`);
+        // clean up
         return () => {
-            console.log(`cleanup ${count} times`);
+            if (avatar) {
+                // remove preview clear memory
+                avatar && URL.revokeObjectURL(avatar.preview);
+            }
         }
-    }, [count]);
+    }, [avatar]);
 
     return (
         <div>
-            <h1>{count}</h1>
-            <button onClick={() => setCount(count + 1)}>
-                click me
-            </button>
+            <input
+                type="file"
+                onChange={handlePreviewAvatar}
+            />
+            {avatar && <img src={avatar.preview} alt="avatar" width={'40%'} />}
         </div>
     );
 }
