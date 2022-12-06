@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 // Side effect
 
@@ -11,43 +11,55 @@ import { useState, useEffect } from "react";
 // clear timeout / interval
 // remove listener / unsubscribe
 
-  // useEffect(callback, [deps?])
-  // 1 useEffect(callback)
-  // Call callback on every render
-  // Call Callback after add element to DOM
-  // 2 useEffect(callback, [])
+// useEffect(callback, [deps?])
+// 1 useEffect(callback)
+// Call callback on every render
+// Call Callback after add element to DOM
+// 2 useEffect(callback, [])
+// Call callback only on first render
+// 3 useEffect(callback, [deps])
+// Call callback on every render if deps changed
+// -------------------
+//      1,2,3
+// 1. callback always run after render (component mounted)
 
-  // 3 useEffect(callback, [deps])
+const tabs = ['posts', 'comments', 'albums'];
 
-  // -------------------
-  // 1. callback always run after render (component mounted)
-
-
-function Content () {
+function Content() {
     const [title, setTitle] = useState('');
-    const [posts , setPosts] = useState([]);
+    const [posts, setPosts] = useState([]);
+    const [type, setType] = useState('posts');
+
     useEffect(() => {
-        fetch('https://jsonplaceholder.typicode.com/posts')
-            .then(res => res.json())
-            .then(posts => {
+        fetch(`https://jsonplaceholder.typicode.com/${type} `)
+            .then((res) => res.json())
+            .then((posts) => {
                 setPosts(posts);
             });
-    }, []); 
-    
+    }, [type]);
 
     return (
         <div>
-            <input type="text" 
-            value={title}
-            onChange={(e) => setTitle(e.target.value)} />
+            {tabs.map((tab) => (
+                <button 
+                    key={tab} 
+                    onClick={() => setType(tab)
+                }>
+                    {tab}
+                </button>
+            ))}
+            <input
+                type='text'
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+            />
             <ul>
-                {posts.map(post => (
-                    <li>{post}</li>
+                {posts.map((post) => (
+                    <li key={post.id}>{post.title || post.name}</li>
                 ))}
             </ul>
-            {console.log("render")}
         </div>
-    )
+    );
 }
 
-export default Content
+export default Content;
