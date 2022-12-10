@@ -1,76 +1,62 @@
-import { useState, useEffect } from 'react';
+import { useState, useLayoutEffect, useEffect } from 'react';
 
-// Side effect
+// useEffect
+// 1. Cập nhật lại state
+// 2. Cập nhật DOM (mutated có nghia là cập nhật lại 1 property của DOM hay object gọi là đột biến)
 
-// Update DOM
+// 3. render lại ui ****************************************************
 
-// Call Api
-// Listen DOM events
+// 4. Goi cleanup nếu deps thay đổi
+// 5. Gọi useEffect callback
 
-// Cleanup
-// clear timeout / interval
-// remove listener / unsubscribe
+// useLayoutEffect
+// 1. Cập nhật lại state
+// 2. Cập nhật DOM (mutated)
+// 3. Gọi cleanup neu deps thay đổi (sync)
+// 4. Gọi useLayoutEffect callback (sync)
 
-// useEffect(callback, [deps?])
-// 1 useEffect(callback)
-// Call callback on every render
-// Call Callback after add element to DOM
-// 2 useEffect(callback, [])
-// Call callback only on first render
-// 3 useEffect(callback, [deps])
-// Call callback on every render if deps changed
-// -------------------
-//      1,2,3
-// 1. callback always run after render (component mounted)
-// 2. Cleanup function always called bufore component unmounted
-// 3. Cleanup function always called before callback run
+// 5. render lại ui ****************************************************
 
-// FQA
-// 1. callback gọi sau khi element được mount vào DOM 
-// tức là nó phải chạy hết render trước rồi mới chạy callback
-// 2. Phân biệt mount và Rendered tức là đã được mount vào DOM và đã được render ra DOM
-// 3. Có thẻ sử dụng nhiều dep, ít nhất 1 dependency phải thay đổi thì callback mới được gọi
-// 4, Khi setState cùng 1 giá tri thì component không render lại (chỗ  nầy có 2 case 1 là với object và array, 2 là với primitive type)
 
-const lesson = [
-    {
-        id: 1,
-        name: 'React',
-    },
-    {
-        id: 2,
-        name: 'React2',
-    },
-    {
-        id: 3,
-        name: 'React3',
-    },
-];
 function Content() {
-    const [lessionId, setLessionId] = useState(1);
-    useEffect(() => {
-        const handleComment = ({ detail }) => {
-            console.log(detail);
-        }
-        window.addEventListener(`lesson-${lessionId}`, handleComment);
+    const [count, setCount] = useState(0);
 
-        return () => {
-            window.removeEventListener(`lesson-${lessionId}`, handleComment);
+    // xử lý bàng useEffect
+    // sẽ bị render với count = 4
+    // sau đó mói chạy call back
+    // và check count > 3
+    // thì sẽ set lại count = 0
+    // sẽ làm cho ui bị render lại(bị nháp nháy)
+    // useEffect(() => {
+    //     if (count > 3) {
+    //         setCount(0); 
+    //     }
+
+    // }, [count])
+    
+    // ----------------------------------------------
+    
+    // xử lý bằng useLayoutEffect
+    // sẽ ko bị render với count = 4
+    // mà sẽ chạy call back trước khi render
+    // và check count > 3
+    // thì sẽ set lại count = 0
+    // sẽ ko làm cho ui bị render lại(bị nháp nháy)
+
+    useLayoutEffect(() => {
+        if (count > 3) {
+            setCount(0);
         }
-    }, [lessionId]);
+    }, [count])
+
+    const handleRun = () => {
+        setCount(count + 1);
+    };
+    
     return (
         <div>
-            <ul>
-                {lesson.map((item) => (
-                    <li 
-                        style={{ color: item.id === lessionId ? 'red' : '#333' }}
-                        key={item.id}
-                        onClick={() => setLessionId(item.id)}
-                    >
-                        {item.name}
-                    </li>
-                ))}
-            </ul>
+            <h1>{count}</h1>
+            <button onClick={handleRun}>Run</button>
         </div>
     );
 }
