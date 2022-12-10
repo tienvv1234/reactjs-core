@@ -25,34 +25,52 @@ import { useState, useEffect } from 'react';
 // 2. Cleanup function always called bufore component unmounted
 // 3. Cleanup function always called before callback run
 
+// FQA
+// 1. callback gọi sau khi element được mount vào DOM 
+// tức là nó phải chạy hết render trước rồi mới chạy callback
+// 2. Phân biệt mount và Rendered tức là đã được mount vào DOM và đã được render ra DOM
+// 3. Có thẻ sử dụng nhiều dep, ít nhất 1 dependency phải thay đổi thì callback mới được gọi
+// 4, Khi setState cùng 1 giá tri thì component không render lại (chỗ  nầy có 2 case 1 là với object và array, 2 là với primitive type)
+
+const lesson = [
+    {
+        id: 1,
+        name: 'React',
+    },
+    {
+        id: 2,
+        name: 'React2',
+    },
+    {
+        id: 3,
+        name: 'React3',
+    },
+];
 function Content() {
-    const [avatar, setAvatar] = useState(null);
-    const handlePreviewAvatar = (e) => {
-        const file = e.target.files[0];
-        console.log(file)
-        // create preview
-        file.preview = URL.createObjectURL(file);
-        // file avatar preview in memory
-        setAvatar(file);
-    }
-
+    const [lessionId, setLessionId] = useState(1);
     useEffect(() => {
-        // clean up
-        return () => {
-            if (avatar) {
-                // remove preview clear memory
-                avatar && URL.revokeObjectURL(avatar.preview);
-            }
+        const handleComment = ({ detail }) => {
+            console.log(detail);
         }
-    }, [avatar]);
+        window.addEventListener(`lesson-${lessionId}`, handleComment);
 
+        return () => {
+            window.removeEventListener(`lesson-${lessionId}`, handleComment);
+        }
+    }, [lessionId]);
     return (
         <div>
-            <input
-                type="file"
-                onChange={handlePreviewAvatar}
-            />
-            {avatar && <img src={avatar.preview} alt="avatar" width={'40%'} />}
+            <ul>
+                {lesson.map((item) => (
+                    <li 
+                        style={{ color: item.id === lessionId ? 'red' : '#333' }}
+                        key={item.id}
+                        onClick={() => setLessionId(item.id)}
+                    >
+                        {item.name}
+                    </li>
+                ))}
+            </ul>
         </div>
     );
 }
